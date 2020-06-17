@@ -3,7 +3,7 @@
 <suite name="Suite">
   <test name="Test">
     <classes>
-      <class name="com.ixigo.test.TestClass"/>
+      <class name="com.ixigo.test.TestSuite"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Suite -->

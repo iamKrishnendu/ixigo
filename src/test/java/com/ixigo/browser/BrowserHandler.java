@@ -1,36 +1,64 @@
 package com.ixigo.browser;
 
 import java.io.File;
-import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import com.ixigo.base.Base;
+import com.ixigo.library.PropertFileHandler;
 
-public class BrowserHandler extends Base {
+public class BrowserHandler {
 
-	 WebDriver driver;
-//	public BrowserHandler(WebDriver driver) {
-//		super(driver);
-//		this.driver=driver;
-//		}
+	private static WebDriver driver;
+	private static BrowserHandler instanceOfBrowserHandler = null;
+	PropertFileHandler prop = new PropertFileHandler();
 	
-	public void launchApplication(String browser, String url) {
-		ClassLoader classLoader = getClass().getClassLoader();
+	
+	public BrowserHandler() {
 		File file = new File("src/test/resources/driver/chromedriver_83.exe");
 		System.out.println(file.getAbsolutePath());
+		Map<String, Object> prefs = new HashMap<String, Object>();
+		prefs.put("profile.default_content_setting_values.notifications", 2);
 		ChromeOptions options = new ChromeOptions();
+		options.setExperimentalOption("prefs", prefs);
+		options.addArguments("start-maximized");
+		BrowserOptions browser = BrowserOptions.valueOf(prop.getPropertyValues().getProperty("browser"));
+		
 		
 		switch(browser) {
-		case "Chrome":
-			System.setProperty("webdriver.chrome.driver", file.getAbsolutePath());
-			options.addArguments("");
-			driver = new ChromeDriver();
-			driver.get(url);
+		case Chrome :
 			
+			System.setProperty("webdriver.chrome.driver", file.getAbsolutePath());
+			driver = new ChromeDriver(options);
+			break;
+		
+		case ChromeHeadless:
+			
+			System.setProperty("webdriver.chrome.driver", file.getAbsolutePath());
+			options.setHeadless(true);
+			driver = new ChromeDriver(options);
+			break;	
+		default:
+			
+			System.setProperty("webdriver.chrome.driver", file.getAbsolutePath());
+			driver = new ChromeDriver(options);
+			break;
 		}
 	}
-
+	
+	
+	
+	public  static BrowserHandler getInstanceOfBrowser() {
+		if(instanceOfBrowserHandler == null) {
+			instanceOfBrowserHandler = new BrowserHandler();
+		}
+		return instanceOfBrowserHandler;
+	}
+	
+	public static WebDriver getDriver() {
+		return driver;
+	}
 }
